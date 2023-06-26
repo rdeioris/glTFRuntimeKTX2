@@ -48,15 +48,20 @@ public class glTFRuntimeKTX2 : ModuleRules
 			}
 			);
 
-        string ThirdPartyDirectory = System.IO.Path.Combine(ModuleDirectory, "..", "ThirdParty");
-        string ThirdPartyDirectoryIncludePath = ThirdPartyDirectory;
+        string ThirdPartyDirectory = System.IO.Path.Combine(ModuleDirectory, "..", "ThirdParty", "libktx2");
+        string ThirdPartyDirectoryIncludePath = System.IO.Path.Combine(ThirdPartyDirectory, "include");
 
         if (Target.Platform == UnrealTargetPlatform.Win64)
         {
-            string ThirdPartyDirectoryWin64 = System.IO.Path.Combine(ThirdPartyDirectory, "libktx2_win_x64");
-            ThirdPartyDirectoryIncludePath = System.IO.Path.Combine(ThirdPartyDirectoryWin64, "include");
+            string ThirdPartyDirectoryWin64 = System.IO.Path.Combine(ThirdPartyDirectory, "lib", "win_x64");
             PublicAdditionalLibraries.Add(System.IO.Path.Combine(ThirdPartyDirectoryWin64, "ktx.lib"));
             RuntimeDependencies.Add("$(BinaryOutputDir)/ktx.dll", System.IO.Path.Combine(ThirdPartyDirectoryWin64, "ktx.dll"));
+        }
+        else if (Target.Platform == UnrealTargetPlatform.Mac)
+        {
+            string ThirdPartyDirectoryMacArm64 = System.IO.Path.Combine(ThirdPartyDirectory, "lib", "mac_arm64");
+            PublicAdditionalLibraries.Add(System.IO.Path.Combine(ThirdPartyDirectoryMacArm64, "libktx.dylib"));
+            RuntimeDependencies.Add("$(BinaryOutputDir)/libktx.dylib", System.IO.Path.Combine(ThirdPartyDirectoryMacArm64, "libktx.dylib"));
         }
 
         PrivateIncludePaths.Add(ThirdPartyDirectoryIncludePath);
