@@ -63,6 +63,12 @@ public class glTFRuntimeKTX2 : ModuleRules
             PublicAdditionalLibraries.Add(System.IO.Path.Combine(ThirdPartyDirectoryMacArm64, "libktx.dylib"));
             RuntimeDependencies.Add("$(BinaryOutputDir)/libktx.dylib", System.IO.Path.Combine(ThirdPartyDirectoryMacArm64, "libktx.dylib"));
         }
+        else if (Target.Platform == UnrealTargetPlatform.Linux)
+        {
+            string ThirdPartyDirectoryMacArm64 = System.IO.Path.Combine(ThirdPartyDirectory, "lib", "linux_x64");
+            PublicAdditionalLibraries.Add(System.IO.Path.Combine(ThirdPartyDirectoryMacArm64, "libktx.so"));
+            RuntimeDependencies.Add("$(BinaryOutputDir)/libktx.so.4", System.IO.Path.Combine(ThirdPartyDirectoryMacArm64, "libktx.so"));
+        }
 
         PrivateIncludePaths.Add(ThirdPartyDirectoryIncludePath);
     }
