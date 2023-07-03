@@ -23,7 +23,7 @@ void FglTFRuntimeKTX2Module::StartupModule()
 		});
 
 	// check if we have mips
-	FglTFRuntimeParser::OnTextureMips.AddLambda([](TSharedRef<FglTFRuntimeParser> Parser, const int32 TextureIndex, TSharedRef<FJsonObject> JsonTextureObject, TSharedRef<FJsonObject> JsonImageObject, TArray64<uint8>& Bytes, TArray<FglTFRuntimeMipMap>& Mips)
+	FglTFRuntimeParser::OnTextureMips.AddLambda([](TSharedRef<FglTFRuntimeParser> Parser, const int32 TextureIndex, TSharedRef<FJsonObject> JsonTextureObject, TSharedRef<FJsonObject> JsonImageObject, TArray64<uint8>& Bytes, TArray<FglTFRuntimeMipMap>& Mips, const FglTFRuntimeImagesConfig& ImagesConfig)
 		{
 			// skip if already processed
 			if (Mips.Num() > 0)
@@ -109,7 +109,7 @@ void FglTFRuntimeKTX2Module::StartupModule()
 		});
 
 	// extract ImagePixels
-	FglTFRuntimeParser::OnTexturePixels.AddLambda([](TSharedRef<FglTFRuntimeParser> Parser, TSharedRef<FJsonObject> JsonImageObject, TArray64<uint8>& CompressedPixels, int32& Width, int32& Height, TArray64<uint8>& UncompressedPixels)
+	FglTFRuntimeParser::OnTexturePixels.AddLambda([](TSharedRef<FglTFRuntimeParser> Parser, TSharedRef<FJsonObject> JsonImageObject, TArray64<uint8>& CompressedPixels, int32& Width, int32& Height, EPixelFormat& PixelFormat, TArray64<uint8>& UncompressedPixels, const FglTFRuntimeImagesConfig& ImagesConfig)
 		{
 			// skip if already processed
 			if (UncompressedPixels.Num() > 0)
@@ -166,6 +166,7 @@ void FglTFRuntimeKTX2Module::StartupModule()
 
 		Width = KTX2Texture->baseWidth;
 		Height = KTX2Texture->baseHeight;
+		PixelFormat = EPixelFormat::PF_B8G8R8A8;
 
 		ktx_uint8_t* KTX2ImageData = ktxTexture_GetData(ktxTexture(KTX2Texture)) + KTX2Offset;
 
