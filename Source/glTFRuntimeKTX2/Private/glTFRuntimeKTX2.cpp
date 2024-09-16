@@ -69,15 +69,28 @@ void FglTFRuntimeKTX2Module::StartupModule()
 				EPixelFormat PixelFormat = EPixelFormat::PF_B8G8R8A8;
 				if (ktxTexture2_NeedsTranscoding(KTX2Texture))
 				{
-					KTXResult = ktxTexture2_TranscodeBasis(KTX2Texture, KTX_TTF_BC3_RGBA, 0);
-					if (KTXResult != KTX_SUCCESS)
+					if (ImagesConfig.ForcePixelFormat == EPixelFormat::PF_B8G8R8A8)
 					{
-						ktxTexture_Destroy(ktxTexture(KTX2Texture));
-						Parser->AddError("FglTFRuntimeKTX2Module::StartupModule()", "Unable to transcode KTX2 texture");
-						return;
+						KTXResult = ktxTexture2_TranscodeBasis(KTX2Texture, KTX_TTF_RGBA32, 0);
+						if (KTXResult != KTX_SUCCESS)
+						{
+							ktxTexture_Destroy(ktxTexture(KTX2Texture));
+							Parser->AddError("FglTFRuntimeKTX2Module::StartupModule()", "Unable to transcode KTX2 texture");
+							return;
+						}
 					}
+					else
+					{
+						KTXResult = ktxTexture2_TranscodeBasis(KTX2Texture, KTX_TTF_BC3_RGBA, 0);
+						if (KTXResult != KTX_SUCCESS)
+						{
+							ktxTexture_Destroy(ktxTexture(KTX2Texture));
+							Parser->AddError("FglTFRuntimeKTX2Module::StartupModule()", "Unable to transcode KTX2 texture");
+							return;
+						}
 
-					PixelFormat = EPixelFormat::PF_DXT5;
+						PixelFormat = EPixelFormat::PF_DXT5;
+					}
 				}
 
 				int32 MipWidth = KTX2Texture->baseWidth;
@@ -100,6 +113,14 @@ void FglTFRuntimeKTX2Module::StartupModule()
 					Mip.Width = MipWidth;
 					Mip.Height = MipHeight;
 					Mip.PixelFormat = PixelFormat;
+
+					if (PixelFormat == EPixelFormat::PF_B8G8R8A8)
+					{
+						for (int64 IndexR = 0; IndexR < ImageSize; IndexR += 4)
+						{
+							Swap(KTX2ImageData[IndexR], KTX2ImageData[IndexR + 2]);
+						}
+					}
 
 					Mip.Pixels.Append(KTX2ImageData, ImageSize);
 
