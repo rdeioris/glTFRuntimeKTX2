@@ -9,7 +9,7 @@ It will automatically register as a texture processor in glTFRuntime
 
 ## Status
 
-Currently only windows x86_64 is supported
+Currently windows/linux x86_64 and mac arm64 are supported
 
 ## TODO
 
